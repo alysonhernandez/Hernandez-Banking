@@ -3,8 +3,17 @@
 import time
 import mysql.connector
 
-connection = mysql.connector.connect(user = 'root', database = 'hernandez_banking', password = 'r0.#V1a?TH@r$N')
-cursor = connection.cursor()
+#connection = mysql.connector.connect(user = 'root', database = 'hernandez_banking', password = 'r0.#V1a?TH@r$N')
+#cursor = connection.cursor()
+
+mydb = mysql.connector.connect(
+  host="localhost",
+  user="root",
+  password="r0.#V1a?TH@r$N",
+  database="hernandez_banking"
+)
+
+mycursor = mydb.cursor()
 
 
 
@@ -56,13 +65,13 @@ def go_back_menu():
 
 def check_balence():
 
-    testQuery = ('SELECT Funds FROM acc_info')
-    cursor.execute(testQuery)
+    mycursor.execute("SELECT Username, Funds FROM acc_info")
+    myresult = mycursor.fetchall()
 
     print("----------------")
     print("")
-    for item in cursor:
-        print("You current funds are:", item, "dollars.")
+    for item in myresult:
+        print("Funds for:", item, "dollars.")
     print("")
     print("--------")
 
@@ -72,18 +81,34 @@ def check_balence():
 
 
 def deposit_funds():
-
-    testQuery = ('SELECT Funds FROM acc_info')
-    cursor.execute(testQuery)
-
+    
     print("----------------")
+    print("")
+
+    user_acc_pick = input("""Please type the *USERNAME* of the account to desposit funds into.
+                            > """)
+    
+    print("--------")
     print("")
     money_add = int(input("""How much money would you like to deposit?
                             > """))
+    
+    #old_total = mycursor.execute("SELECT Funds FROM acc_info WHERE Username = %s")
+    #acc_val = (user_acc_pick, )
             
-    money_total = testQuery + money_add
+    #new_money_total = old_total + money_add
+    
+    #sql = "SELECT %s UPDATE acc_info SET Funds = %s WHERE Funds = %s"
+    #val = (user_acc_pick, new_money_total, old_total, )
 
-    print("You current funds are:", cursor, "dollars.")
+
+    sql = "SELECT SUM(Funds + %s) FROM acc_info WHERE Username = %s"
+    val = (money_add, user_acc_pick, )
+    mycursor.execute(sql, val)
+    
+    mydb.commit()
+
+    print("You current funds are:", mycursor, "dollars.")
     print("")
     print("----------------")
 
@@ -109,11 +134,16 @@ def create_acc():
     user_name = input("                                User Name: ")
     user_pass = input("                                Password: ")
     user_Email = input("                                Email: ")
-    user_funds = input("                                Funds: ")
+    user_funds = int(input("                                Funds: "))
+    acc_id = int(input("                                ID: "))
 
-    addData = ('INSERT INTO acc_info(ID, Full_Name, Username, Password, Email, Funds) VALUES(2,', user_full_name, user_name, user_pass, user_Email, user_funds)
-    cursor.execute(addData)
+    sql = "INSERT INTO acc_info(ID, Full_Name, Username, Password, Email, Funds) VALUES (%s, %s, %s, %s, %s, %s)"
+    val = (acc_id, user_full_name, user_name, user_pass, user_Email, user_funds)
+    mycursor.execute(sql, val)
 
+    mydb.commit()
+
+    print("")
     print("New account has been successfully added.")
     print("")
     print("----------------")
@@ -130,8 +160,16 @@ def delete_acc():
     user_acc_del = (input("""Please type the *USERNAME* of the account to be deleted.
                         > """))
             
-    testQuery = ('DELETE FROM acc_info WHERE Username =', user_acc_del)
-    cursor.execute(testQuery)   
+    sql = "DELETE FROM acc_info WHERE Username = %s"
+    val = (user_acc_del, )
+    mycursor.execute(sql, val)
+    mydb.commit()
+
+    print("")
+    print("Account has been successfully deleted.")
+    print("")
+    print("----------------")
+
 
     time.sleep(1)
     go_back_menu()
