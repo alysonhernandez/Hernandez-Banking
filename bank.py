@@ -88,6 +88,8 @@ def deposit_funds():
     user_acc_pick = input("""Please type the *USERNAME* of the account to desposit funds into.
                             > """)
     
+
+    
     print("--------")
     print("")
     money_add = int(input("""How much money would you like to deposit?
@@ -103,12 +105,12 @@ def deposit_funds():
 
 
     sql = "SELECT SUM(Funds + %s) FROM acc_info WHERE Username = %s"
-    val = (money_add, user_acc_pick, )
+    val = (int(money_add), user_acc_pick, )
     mycursor.execute(sql, val)
     
     mydb.commit()
 
-    print("You current funds are:", mycursor, "dollars.")
+    print("You current funds are:", mydb, "dollars.")
     print("")
     print("----------------")
 
@@ -134,8 +136,33 @@ def create_acc():
     user_name = input("                                User Name: ")
     user_pass = input("                                Password: ")
     user_Email = input("                                Email: ")
-    user_funds = int(input("                                Funds: "))
-    acc_id = int(input("                                ID: "))
+    user_funds_s = input("                                Funds: ")
+
+    while not user_funds_s.isdigit():
+        print("--------")
+        print("")
+        print("Invalid number. Please input *only digits*")
+        print("")
+        print("--------")
+        print("")
+        user_funds_s = input("                                Funds: ")
+
+    user_funds = int(user_funds_s)
+
+    acc_id_s = input("                                ID: ")
+
+    while not acc_id_s.isdigit():
+        print("--------")
+        print("")
+        print("Invalid number. Please input *only digits*")
+        print("")
+        print("--------")
+        print("")
+        acc_id_s = input("                                ID: ")
+
+    acc_id = int(acc_id_s)
+
+
 
     sql = "INSERT INTO acc_info(ID, Full_Name, Username, Password, Email, Funds) VALUES (%s, %s, %s, %s, %s, %s)"
     val = (acc_id, user_full_name, user_name, user_pass, user_Email, user_funds)
@@ -159,6 +186,10 @@ def delete_acc():
 
     user_acc_del = (input("""Please type the *USERNAME* of the account to be deleted.
                         > """))
+    print("")
+    time.sleep(1)
+    user_del_con = input("""Enter the *PASSWORD** of the account to continue deletion.
+                        > """)
             
     sql = "DELETE FROM acc_info WHERE Username = %s"
     val = (user_acc_del, )
