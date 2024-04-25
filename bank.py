@@ -36,7 +36,7 @@ def go_back_menu():
         
         if go_back.lower() == "y":
             selection()
-            go_back_con == True
+            go_back_con = True
 
         elif go_back.lower() == "n":
             go_back_con = True
@@ -88,29 +88,41 @@ def deposit_funds():
     user_acc_pick = input("""Please type the *USERNAME* of the account to desposit funds into.
                             > """)
     
-
     
     print("--------")
     print("")
     money_add = int(input("""How much money would you like to deposit?
                             > """))
-    
-    #old_total = mycursor.execute("SELECT Funds FROM acc_info WHERE Username = %s")
-    #acc_val = (user_acc_pick, )
-            
-    #new_money_total = old_total + money_add
-    
-    #sql = "SELECT %s UPDATE acc_info SET Funds = %s WHERE Funds = %s"
-    #val = (user_acc_pick, new_money_total, old_total, )
 
-
-    sql = "SELECT SUM(Funds + %s) FROM acc_info WHERE Username = %s"
-    val = (int(money_add), user_acc_pick, )
+    
+    sql = "SELECT Funds FROM acc_info WHERE Username = %s"
+    val = (user_acc_pick, )
     mycursor.execute(sql, val)
-    
-    mydb.commit()
 
-    print("You current funds are:", mydb, "dollars.")
+    funds_old_result = mycursor.fetchone()
+
+    if funds_old_result:
+        funds_old = funds_old_result[0]  
+        funds_total = money_add + funds_old 
+        sql_2 = "UPDATE acc_info SET Funds = %s WHERE Username = %s"
+        val_2 = (funds_total, user_acc_pick)
+        mycursor.execute(sql_2, val_2, )
+        mydb.commit()
+
+        print("--------")
+        print("")
+        print("Your current funds are:", funds_total, "dollars.") 
+        print("")
+        print("--------")
+
+    else:
+        print("----------------")
+        print("")
+        print("User not found.")
+        print("")
+        print("----------------")
+
+
     print("")
     print("----------------")
 
@@ -119,7 +131,55 @@ def deposit_funds():
 
 
 def withdraw_funds():
-    print("wip")
+    print("----------------")
+    print("")
+
+    user_acc_pick = input("""Please type the *USERNAME* of the account to withdraw funds from.
+                            > """)
+    
+    
+    print("--------")
+    print("")
+    money_sub = int(input("""How much money would you like to withdraw?
+                            > """))
+
+    sql = "SELECT Funds FROM acc_info WHERE Username = %s"
+    val = (user_acc_pick, )
+    mycursor.execute(sql, val)
+
+    funds_old_result = mycursor.fetchone()
+
+    if funds_old_result:
+        funds_old = funds_old_result[0]  
+        funds_total = funds_old - money_sub
+
+        if funds_total < 0: #if the user puts in a number that is above their funds
+            print("----------------")
+            print("")
+            print("You cannot have a negative balance. Please take out a loan beforehand.")
+            print("")
+            print("----------------")
+
+            time.sleep(1)
+            go_back_menu()
+
+        sql_2 = "UPDATE acc_info SET Funds = %s WHERE Username = %s"
+        val_2 = (funds_total, user_acc_pick)
+        mycursor.execute(sql_2, val_2, )
+        mydb.commit()
+
+        print("--------")
+        print("")
+        print("Your current funds are:", funds_total, "dollars.") 
+        print("")
+        print("--------")
+
+    else:
+        print("----------------")
+        print("")
+        print("User not found.")
+        print("")
+        print("----------------")
 
     time.sleep(1)
     go_back_menu()
@@ -186,20 +246,54 @@ def delete_acc():
 
     user_acc_del = (input("""Please type the *USERNAME* of the account to be deleted.
                         > """))
-    print("")
-    time.sleep(1)
-    user_del_con = input("""Enter the *PASSWORD** of the account to continue deletion.
-                        > """)
-            
-    sql = "DELETE FROM acc_info WHERE Username = %s"
+    
+    sql = "SELECT Username FROM acc_info WHERE Username = %s"
     val = (user_acc_del, )
     mycursor.execute(sql, val)
-    mydb.commit()
 
-    print("")
-    print("Account has been successfully deleted.")
-    print("")
-    print("----------------")
+    username_result = mycursor.fetchone()
+
+    if username_result:
+
+        print("")
+        time.sleep(1)
+        #confirms account deletion with a password
+        user_del_con = input("""Enter the *PASSWORD** of the account to continue deletion.
+                            > """)
+        
+        sql_2 = "SELECT Password FROM acc_info WHERE Password = %s"
+        val_2 = (user_acc_del, )
+        mycursor.execute(sql_2, val_2)
+        password_result = mycursor.fetchone()
+        print(password_result)
+
+        if password_result == user_acc_del:
+            sql_3 = "DELETE FROM acc_info WHERE Username = %s"
+            val_3 = (user_acc_del, )
+            mycursor.execute(sql_3, val_3)
+            mydb.commit()
+
+            print("")
+            print("Account has been successfully deleted.")
+            print("")
+            print("----------------")
+
+
+        else:
+            print("----------------")
+            print("")
+            print("Password does not match.")
+            print("")
+            print("----------------")
+
+    else:
+        print("----------------")
+        print("")
+        print("User not found.")
+        print("")
+        print("----------------")
+
+
 
 
     time.sleep(1)
@@ -208,10 +302,96 @@ def delete_acc():
 
 
 def modify_acc():
-    print("wip")
+    
+    print("----------------")
+    print("")
+    
+    print("Edit Account Information:.")
+    print("""
+    - Full Name
+    - Username
+    - Password
+    - Email
+    - None (Go back to menu)
+          """)
+    
+    user_menu = False
 
-    time.sleep(1)
-    go_back_menu()
+    while user_menu == False:
+        time.sleep(1)
+        user_modify_pick = input("""Please choose one of the options to continue.
+                                > """)
+
+        if user_modify_pick.lower() == "full name":
+            time.sleep(1)
+
+            user_acc_mod = (input("""Please type the *USERNAME* of the account to be modifed.
+                                    > """))
+            print("")
+            time.sleep(1)
+
+            user_new_name = (input("""Please type the *FULL NAME* you would like to change to.
+                                    > """))
+            
+            sql = "UPDATE acc_info SET Username = %s WHERE Username = %s"
+            val = (user_new_name, user_acc_mod, )
+            mycursor.execute(sql, val)
+
+            print("")
+            print("Full Name has been successfully changed.")
+            print("")
+            print("----------------")
+
+
+
+
+
+
+            
+
+
+
+
+
+
+            
+            user_menu = True
+
+
+        #Deposits user's money into account
+        elif user_modify_pick.lower() == "username":
+            time.sleep(1)
+            deposit_funds()
+            user_menu = True
+
+        #Withdraws user's money into account
+        elif user_modify_pick.lower() == "password":
+            time.sleep(1)
+            withdraw_funds()
+            user_menu = True
+
+        #Makes a new account
+        elif user_modify_pick.lower() == "email":
+
+            time.sleep(1)
+            create_acc()
+            user_menu = True
+
+        #Removes an account
+        elif user_modify_pick.lower() == "none":
+            time.sleep(1)
+            go_back_menu()
+            user_menu = True
+
+        else:
+            print("")
+            print("--------")
+            print("Please choose a valid options.")
+            print("--------")
+            print("")
+            user_menu = False
+    
+
 
 
 
