@@ -259,15 +259,15 @@ def delete_acc():
         time.sleep(1)
         #confirms account deletion with a password
         user_del_con = input("""Enter the *PASSWORD** of the account to continue deletion.
-                            > """)
+                        > """)
         
-        sql_2 = "SELECT Password FROM acc_info WHERE Password = %s"
+        sql_2 = "SELECT Password FROM acc_info WHERE Username = %s"
         val_2 = (user_acc_del, )
         mycursor.execute(sql_2, val_2)
         password_result = mycursor.fetchone()
-        print(password_result)
 
-        if password_result == user_acc_del:
+    
+        if password_result and password_result[0] == user_del_con:
             sql_3 = "DELETE FROM acc_info WHERE Username = %s"
             val_3 = (user_acc_del, )
             mycursor.execute(sql_3, val_3)
