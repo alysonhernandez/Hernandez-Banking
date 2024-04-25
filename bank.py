@@ -101,6 +101,7 @@ def deposit_funds():
 
     funds_old_result = mycursor.fetchone()
 
+    #checks to see if account exists
     if funds_old_result:
         funds_old = funds_old_result[0]  
         funds_total = money_add + funds_old 
@@ -149,6 +150,7 @@ def withdraw_funds():
 
     funds_old_result = mycursor.fetchone()
 
+    #checks to see if account exists
     if funds_old_result:
         funds_old = funds_old_result[0]  
         funds_total = funds_old - money_sub
@@ -253,6 +255,7 @@ def delete_acc():
 
     username_result = mycursor.fetchone()
 
+    #checks to see if account exists
     if username_result:
 
         print("")
@@ -266,7 +269,7 @@ def delete_acc():
         mycursor.execute(sql_2, val_2)
         password_result = mycursor.fetchone()
 
-    
+        #checks if the password the user input matches the actual one    
         if password_result and password_result[0] == user_del_con:
             sql_3 = "DELETE FROM acc_info WHERE Username = %s"
             val_3 = (user_acc_del, )
@@ -319,66 +322,207 @@ def modify_acc():
 
     while user_menu == False:
         time.sleep(1)
+        print("----------------")
+        print("")
         user_modify_pick = input("""Please choose one of the options to continue.
                                 > """)
+        print("")
 
         if user_modify_pick.lower() == "full name":
+            user_menu = True
+
             time.sleep(1)
+            print("----------------")
+            print("")
 
             user_acc_mod = (input("""Please type the *USERNAME* of the account to be modifed.
                                     > """))
-            print("")
-            time.sleep(1)
-
-            user_new_name = (input("""Please type the *FULL NAME* you would like to change to.
-                                    > """))
             
-            sql = "UPDATE acc_info SET Username = %s WHERE Username = %s"
-            val = (user_new_name, user_acc_mod, )
+            sql = "SELECT Username FROM acc_info WHERE Username = %s"
+            val = (user_acc_mod, )
             mycursor.execute(sql, val)
 
-            print("")
-            print("Full Name has been successfully changed.")
-            print("")
-            print("----------------")
+            username_result = mycursor.fetchone()
+
+            #checks to see if account exists
+            if username_result:
+                print("")
+                time.sleep(1)
+
+                user_new_name = (input("""Please type the *FULL NAME* you would like to change to.
+                                        > """))
+                
+                sql = "UPDATE acc_info SET Full_Name = %s WHERE Username = %s"
+                val = (user_new_name, user_acc_mod, )
+                mycursor.execute(sql, val)
+                mydb.commit()
+
+                print("-------")
+                print("")
+                print("Full Name has been successfully changed.")
+                print("")
+                print("----------------")
+
+            else:
+                print("----------------")
+                print("")
+                print("User not found.")
+                print("")
+                print("----------------")
+
+
+            time.sleep(1)
+            go_back_menu()          
 
 
 
-
-
-
-            
-
-
-
-
-
-
-            
-            user_menu = True
-
-
-        #Deposits user's money into account
         elif user_modify_pick.lower() == "username":
-            time.sleep(1)
-            deposit_funds()
             user_menu = True
+            
+            time.sleep(1)
+            print("----------------")
+            print("")
 
-        #Withdraws user's money into account
+            user_acc_mod = (input("""Please type the *USERNAME* of the account to be modifed.
+                                    > """))
+            
+            sql = "SELECT Username FROM acc_info WHERE Username = %s"
+            val = (user_acc_mod, )
+            mycursor.execute(sql, val)
+
+            username_result = mycursor.fetchone()
+
+            #checks to see if account exists
+            if username_result:
+                print("")
+                time.sleep(1)
+
+                user_new_user = (input("""Please type the *USERNAME* you would like to change to.
+                                        > """))
+                
+                sql = "UPDATE acc_info SET Username = %s WHERE Username = %s"
+                val = (user_new_user, user_acc_mod, )
+                mycursor.execute(sql, val)
+                mydb.commit()
+
+                print("-------")
+                print("")
+                print("Username has been successfully changed.")
+                print("")
+                print("----------------")
+
+            else:
+                print("----------------")
+                print("")
+                print("User not found.")
+                print("")
+                print("----------------")
+
+
+            time.sleep(1)
+            go_back_menu()          
+
         elif user_modify_pick.lower() == "password":
-            time.sleep(1)
-            withdraw_funds()
             user_menu = True
+            
+            time.sleep(1)
+            print("----------------")
+            print("")
 
-        #Makes a new account
+            user_acc_mod = (input("""Please type the *USERNAME* of the account to be modifed.
+                                    > """))
+            
+            sql = "SELECT Username FROM acc_info WHERE Username = %s"
+            val = (user_acc_mod, )
+            mycursor.execute(sql, val)
+
+            username_result = mycursor.fetchone()
+
+            #checks to see if account exists
+            if username_result:
+                print("")
+                time.sleep(1)
+
+                user_new_pass = (input("""Please type the *PASSWORD* you would like to change to.
+                                        > """))
+                
+                sql = "UPDATE acc_info SET Password = %s WHERE Username = %s"
+                val = (user_new_pass, user_acc_mod, )
+                mycursor.execute(sql, val)
+                mydb.commit()
+
+                print("-------")
+                print("")
+                print("Password has been successfully changed.")
+                print("")
+                print("----------------")
+
+            else:
+                print("----------------")
+                print("")
+                print("User not found.")
+                print("")
+                print("----------------")
+
+
+            time.sleep(1)
+            go_back_menu()          
+        
         elif user_modify_pick.lower() == "email":
 
-            time.sleep(1)
-            create_acc()
             user_menu = True
+            
+            time.sleep(1)
+            print("----------------")
+            print("")
 
-        #Removes an account
+            user_acc_mod = (input("""Please type the *USERNAME* of the account to be modifed.
+                                    > """))
+            
+            sql = "SELECT Username FROM acc_info WHERE Username = %s"
+            val = (user_acc_mod, )
+            mycursor.execute(sql, val)
+
+            username_result = mycursor.fetchone()
+
+            #checks to see if account exists
+            if username_result:
+                print("")
+                time.sleep(1)
+
+                user_new_email = (input("""Please type the *EMAIL* you would like to change to.
+                                        > """))
+                
+                sql = "UPDATE acc_info SET Email = %s WHERE Username = %s"
+                val = (user_new_email, user_acc_mod, )
+                mycursor.execute(sql, val)
+                mydb.commit()
+
+                print("-------")
+                print("")
+                print("Email has been successfully changed.")
+                print("")
+                print("----------------")
+
+            else:
+                print("----------------")
+                print("")
+                print("User not found.")
+                print("")
+                print("----------------")
+
+
+            time.sleep(1)
+            go_back_menu()          
+
+
         elif user_modify_pick.lower() == "none":
+
+            print("----------------")
+            print("")
+            print("No modifications will be applied.")
+            print("")
+            print("----------------")
             time.sleep(1)
             go_back_menu()
             user_menu = True
@@ -386,7 +530,7 @@ def modify_acc():
         else:
             print("")
             print("--------")
-            print("Please choose a valid options.")
+            print("Please choose a valid option.")
             print("--------")
             print("")
             user_menu = False
@@ -478,6 +622,53 @@ def selection():
             print("")
             user_menu = False
 
+#user login page
+def user_login():
+    time.sleep(1)
+    login_success = False
+
+    while login_success == False:
+
+        print("Please login in below to get started.")
+        print("         If you don't have an account, type "'NEW ACCOUNT'" to make one.")
+        time.sleep(1)
+        print("")
+        login_username = input("""USERNAME:
+                                > """)
+        print("")
+        login_password = input("""PASSWORD:
+                                > """)
+        
+        sql = "SELECT Username, Password FROM acc_info WHERE Username = %s AND Password = %s"
+        val = (login_username, login_password, )
+        mycursor.execute(sql, val)
+
+        login_result = mycursor.fetchone()
+
+        if login_result:
+            login_success = True
+            time.sleep(1)
+            print("")
+            print("----------------")
+            print("Successfully logged in.")
+            print("----------------")
+            print("")
+            time.sleep(1)
+
+        else:
+            login_success = False
+            time.sleep(1)
+            print("")
+            print("--------")
+            print("Your *USERNAME* and/or *PASSWORD* were invalid. Please try again.")
+            print("--------")
+            print("")
+            time.sleep(1)
+
+        if login_username.lower() == "new account" or login_password.lower() == "new account":
+            login_success = True
+            time.sleep(1)
+            create_acc()
 
 
 
@@ -485,6 +676,13 @@ def selection():
 
 #------------------------
 #Greeting
+
+print("")
+print("----------------")
+print("Welcome to Hernandez Banking!")
+print("----------------")
+print("")
+user_login()
 
 print("")
 print("----------------")
