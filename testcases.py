@@ -17,29 +17,35 @@ class TestingBankSys(unittest.TestCase):
 
         self.assertEqual(result, ["Funds for: ('user1', 100) dollars.", "Funds for: ('user2', 200) dollars."])
 
+    #made premade user acc with username and funds to it to test
     @patch('builtins.input', side_effect=['user_1', '50'])
     def test_deposit_funds(self, mock_input):
 
+        #what the machine is going to add
         test_user = {"user_1": 100}
 
         deposit_funds(test_user)
 
+        #tests if the machine added 50 dollars
         self.assertEqual(test_user['user_1'], 150)
 
+        #makes sure the username is not an empty value
         self.assertIsNotNone(test_user['user_1'])
 
 
+    #made premade user acc with username and funds to it to test
     @patch('builtins.input', side_effect=['user_2', '50'])
     def test_withdraw_funds(self, mock_input):
 
-        #making test user
+        #what the machine is going to subtract
         test_user = {"user_2": 100}
 
         withdraw_funds(test_user)
 
-
+        #tests if the machine subtrcted 50 dollars
         self.assertEqual(test_user['user_2'], 50)
 
+        #makes sure the update values didnt stay the same
         self.assertIsNot(test_user['user_2'], 100)
 
 
