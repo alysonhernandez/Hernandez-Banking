@@ -3,8 +3,6 @@
 import time
 import mysql.connector
 
-#connection = mysql.connector.connect(user = 'root', database = 'hernandez_banking', password = 'r0.#V1a?TH@r$N')
-#cursor = connection.cursor()
 
 mydb = mysql.connector.connect(
   host="localhost",
@@ -672,8 +670,8 @@ def user_login():
 
 
         print("Please login in below to get started.")
-        print("""         If you don't have an account, type "'NEW ACCOUNT'" to make one. 
-                          Or type "'EXIT'" to exit the program.""")
+        print("""         If you don't have an account, type "NEW ACCOUNT" to make one. 
+                          Or type "EXIT" to exit the program.""")
         time.sleep(1)
         print("")
         login_username = input("""USERNAME:
@@ -696,7 +694,7 @@ def user_login():
             create_acc()
 
         #if the user wants to leave, they will leave
-        elif login_username.lower() == "new account" or login_password.lower() == "new account":
+        elif login_username.lower() == "exit" or login_password.lower() == "exit":
             login_success = True
             print("")
             print("----------------")
@@ -726,8 +724,6 @@ def user_login():
             print("--------")
             print("")
             time.sleep(1)
-
-
 
 
 
